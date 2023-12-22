@@ -14,9 +14,9 @@ pub struct Geometry {
 
 impl Geometry {
     pub fn new(radius: f32) -> Geometry {
-        Geometry { 
+        Geometry {
             radius,
-            points: vec![] 
+            points: vec![],
         }
     }
 
@@ -38,8 +38,14 @@ impl Geometry {
             let path = circular_paths.get_mut(c_ix).unwrap();
             let radial_offset = segment_size * (i as f32);
 
-            let x: f32 = f32::sin(radial_offset) * self.radius;
-            let y: f32 = f32::cos(radial_offset) * self.radius;
+            // let mut sign: f32 = 1.;
+
+            // if PI - radial_offset < 0. {
+            //     sign = -1.;
+            // }
+
+            let x: f32 = f32::cos(radial_offset) * self.radius;
+            let y: f32 = f32::sin(radial_offset) * self.radius;
             let z: f32 = 0.;
 
             let point = Point { x, y, z };
@@ -66,9 +72,16 @@ impl Geometry {
 
                         // reduces a neg to -1 and a pos to 1
                         let _sign = point.x.powi(0);
+
+                        let mut sign = 1.;
+                        if point.x < 0. {
+                            sign = -1.;
+                        }
+
+                        println!("{}", _sign);
                         let point_radius = f32::abs(point.x);
 
-                        let x = f32::cos(z_radial_offset) * point_radius;
+                        let x = f32::cos(z_radial_offset) * point_radius * sign;
                         let z = f32::sin(z_radial_offset) * point_radius;
 
                         Point { x, y: point.y, z }
@@ -78,6 +91,8 @@ impl Geometry {
             .collect();
 
         self.points = geometry.into_iter().flatten().collect();
+
+        // self.points = circular_paths.into_iter().flatten().collect();
     }
 
     pub fn get_points(&self) -> &Vec<Point> {

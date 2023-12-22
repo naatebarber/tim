@@ -4,17 +4,20 @@ use draw::*;
 
 pub struct Artist {
     radius: f32,
-    canvas: Canvas
+    pad: f32,
+    canvas: Canvas,
 }
 
 impl Artist {
-    pub fn new(radius: f32) -> Artist {
-        let diam = (radius * 2.) as u32;
+    pub fn new(radius: f32, pad: f32) -> Artist {
+        let mut diam = (radius * 2.) as u32;
+        diam = diam + (2. * pad) as u32;
         let canvas = Canvas::new(diam, diam);
 
         Artist {
             radius,
-            canvas
+            pad,
+            canvas,
         }
     }
 
@@ -26,8 +29,8 @@ impl Artist {
             .iter()
             .map(|point: &geometry::Point| {
                 let luminosity = point.z;
-                let x = self.radius + point.x;
-                let y = self.radius + point.y;
+                let x = self.radius + point.x + self.pad;
+                let y = self.radius + point.y + self.pad;
 
                 Artist::point_at(x, y, Some(luminosity as u8))
             })
