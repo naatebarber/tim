@@ -1,24 +1,19 @@
-mod artist;
-mod geometry;
+mod nhedron;
 
+use std::env;
 use hex;
-use std::env::args;
+use texual_geometry::Encoder;
 
-use crate::{artist::Artist, geometry::Geometry};
+use nhedron::encoder::NHedronEncoder;
 
 fn main() {
-    let tst = "
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-";
+    let input_txt = env::args().nth(1).unwrap_or_else(|| String::from("Generic"));
+    let transform_hex = hex::encode(input_txt);
+    let encoder = NHedronEncoder::from_sequence(transform_hex);
 
-    // let input_string = args().nth(1).unwrap();
-    let hex = hex::encode(tst);
+    let cwd = env::current_dir().unwrap();
+    let cwd = cwd.to_str().unwrap();
+    let outfile = format!("{}/{}", cwd, "test.svg");
 
-    let mut geometry = Geometry::new();
-    geometry.translate(hex.clone());
-
-    Artist::from_geometry(&geometry);
-
-    println!("{:?}", geometry.get_points());
-    println!("{}", hex);
+    encoder.to(&outfile);
 }

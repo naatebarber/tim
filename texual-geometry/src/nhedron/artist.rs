@@ -1,47 +1,45 @@
-use crate::geometry;
-use crate::geometry::Geometry;
-use draw::{
-    render::{bitmap::PNGRenderer, Renderer},
-    *,
-};
-use std::env;
+use super::geometry;
+use super::geometry::Geometry;
+use draw::*;
 
-pub struct Artist;
+pub struct Artist {
+    radius: f32,
+    canvas: Canvas
+}
 
 impl Artist {
-    pub fn from_geometry(geometry: &Geometry) {
-        let diameter = 510;
-        let radius: f32 = (diameter as f32) / 2.;
+    pub fn new(radius: f32) -> Artist {
+        let diam = (radius * 2.) as u32;
+        let canvas = Canvas::new(diam, diam);
 
-        let mut canvas = Canvas::new(diameter, diameter);
-        Artist::background(&mut canvas);
+        Artist {
+            radius,
+            canvas
+        }
+    }
+
+    pub fn from_geometry(&mut self, geometry: &Geometry) {
+        Artist::background(&mut self.canvas);
 
         let pts: Vec<Drawing> = geometry
             .get_points()
             .iter()
             .map(|point: &geometry::Point| {
                 let luminosity = point.z;
-                let x = radius + point.x;
-                let y = radius + point.y;
+                let x = self.radius + point.x;
+                let y = self.radius + point.y;
 
                 Artist::point_at(x, y, Some(luminosity as u8))
             })
             .collect();
 
         for d in pts.into_iter() {
-            canvas.display_list.add(d);
+            self.canvas.display_list.add(d);
         }
-
-        Artist::export(&canvas);
     }
 
     pub fn point_at(x: f32, y: f32, luminosity: Option<u8>) -> Drawing {
-        let mut luminosity = luminosity.unwrap_or_else(|| 255);
-
-        if luminosity < 0 || luminosity > 255 {
-            println!("Invalid luminosity");
-            luminosity = 255;
-        }
+        let luminosity = luminosity.unwrap_or_else(|| 255);
 
         Drawing::new()
             .with_shape(Shape::Rectangle {
@@ -68,14 +66,11 @@ impl Artist {
         canvas.display_list.add(bg);
     }
 
-    pub fn export(canvas: &Canvas) {
-        let cwd = env::current_dir().unwrap();
-        let cwd = cwd.to_str().unwrap();
-        let outfile = format!("{}/{}", cwd, "test.svg");
-
-        println!("{}", outfile);
-
-        render::save(canvas, &outfile, SvgRenderer::new())
+    pub fn export(&self, path: &str) {
+        // let cwd = env::current_dir().unwrap();
+        // let cwd = cwd.to_str().unwrap();
+        // let outfile = format!("{}/{}", cwd, "test.svg");
+        render::save(&self.canvas, path, SvgRenderer::new())
             .expect("Failed to save your geometry to disk.")
     }
 }
