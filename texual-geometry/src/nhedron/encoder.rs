@@ -1,5 +1,5 @@
 use super::{artist::Artist, geometry::Geometry};
-use texual_geometry::Encoder;
+use crate::Encoder;
 
 pub struct NHedronEncoder {
     geometry: Geometry,

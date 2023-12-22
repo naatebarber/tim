@@ -38,12 +38,6 @@ impl Geometry {
             let path = circular_paths.get_mut(c_ix).unwrap();
             let radial_offset = segment_size * (i as f32);
 
-            // let mut sign: f32 = 1.;
-
-            // if PI - radial_offset < 0. {
-            //     sign = -1.;
-            // }
-
             let x: f32 = f32::cos(radial_offset) * self.radius;
             let y: f32 = f32::sin(radial_offset) * self.radius;
             let z: f32 = 0.;
@@ -78,7 +72,6 @@ impl Geometry {
                             sign = -1.;
                         }
 
-                        println!("{}", _sign);
                         let point_radius = f32::abs(point.x);
 
                         let x = f32::cos(z_radial_offset) * point_radius * sign;
@@ -91,8 +84,6 @@ impl Geometry {
             .collect();
 
         self.points = geometry.into_iter().flatten().collect();
-
-        // self.points = circular_paths.into_iter().flatten().collect();
     }
 
     pub fn get_points(&self) -> &Vec<Point> {
