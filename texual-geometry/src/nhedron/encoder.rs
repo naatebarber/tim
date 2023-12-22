@@ -7,7 +7,7 @@ pub struct NHedronEncoder {
     pad: f32,
 }
 
-impl Encoder<NHedronEncoder> for NHedronEncoder {
+impl Encoder for NHedronEncoder {
     fn from_sequence(input_sequence: String) -> NHedronEncoder {
         // HARDCODE RADIUS AND PAD FOR NOW
 
