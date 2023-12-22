@@ -1,2 +1,3 @@
-mod encoder;
+mod artist;
+pub mod encoder;
 mod geometry;
