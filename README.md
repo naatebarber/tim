@@ -1,7 +1,22 @@
 ### Create 3-dimensional geometry from an input string
 
+
+# NHedron Encoder
+
+Attributes:  
+ - Harder to decode (img to hex) because of irrational PI products being mapped to rational PX values.
+ - Easier to model mathematically since data is encoded as elliptical geometry
+
 Steps:
  - Convert string to hex
  - On an XYZ plane, create 16 circles (one for each hex char), each rotated around the z plane by (2Pi/16) * n radians, where n cooresponds to the index of the hex char.
  - Split each circle into M radial segments, where M is the length of the input
  - Each character from the input string is placed onto its cooresponding circle, with a radial segment offset of L (it's index in the input sequence);
+
+# Spiral Encoder
+
+Attributes:
+ - Predefined input seq size defined by W, H of the image
+ - Relatively easy to decode after encode
+ - Less mathematically easy to model, as the creation of the geometry is programmatic and not sinusoidal
+ 
