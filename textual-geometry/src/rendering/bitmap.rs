@@ -1,34 +1,27 @@
-use image::GrayImage;
-use image::ImageError;
-use image::io::Reader as ImageReader;
 use crate::geometry::Geometry;
 use crate::geometry::Point;
 use crate::geometry::PreGeometry;
+use image::io::Reader as ImageReader;
+use image::GrayImage;
+use image::ImageError;
 
 pub struct Bitmap {
     buf: GrayImage,
-    pad: u32,
 }
 
-
 impl Bitmap {
-    pub fn new(dim: u32, pad: u32) -> Bitmap {
-        let imsize = 2 * pad + dim;
+    pub fn new(dim: u32) -> Bitmap {
+        let imsize = dim + 1;
         let image_buffer = GrayImage::from_fn(imsize, imsize, |_, _| image::Luma([0u8]));
 
-        Bitmap {
-            buf: image_buffer,
-            pad,
-        }
+        Bitmap { buf: image_buffer }
     }
 
     pub fn from_geometry(&mut self, geometry: &dyn Geometry<Point>) {
         let points = geometry.get_points();
 
         for point in points.iter() {
-            let pix = self
-                .buf
-                .get_pixel_mut(self.pad + point.x, self.pad + point.y);
+            let pix = self.buf.get_pixel_mut(point.x, point.y);
             *pix = image::Luma([255u8])
         }
     }
@@ -45,7 +38,7 @@ impl Bitmap {
                     return Some(Point {
                         x,
                         y,
-                        z: Some(pix.0[0] as u32)
+                        z: Some(pix.0[0] as u32),
                     });
                 } else {
                     None
@@ -56,7 +49,7 @@ impl Bitmap {
         Ok(((width, height), points))
     }
 
-    pub fn to_points(&mut self, src: &str) -> Result<PreGeometry, ImageError> {
+    pub fn to_points(src: &str) -> Result<PreGeometry, ImageError> {
         let image = ImageReader::open(src)?.decode()?;
         let luma8 = image.into_luma8();
         let (width, height) = luma8.dimensions();
@@ -67,8 +60,8 @@ impl Bitmap {
                 return Point {
                     x,
                     y,
-                    z: Some(pix.0[0] as u32)
-                }
+                    z: Some(pix.0[0] as u32),
+                };
             })
             .collect::<Vec<Point>>();
 

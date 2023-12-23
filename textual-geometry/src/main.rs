@@ -1,10 +1,12 @@
 mod geometry;
 
-use textual_geometry::encoder::LossyEncoder;
 use std::env;
+use textual_geometry::encoder::Encoder;
+use textual_geometry::encoder::LossyEncoder;
 use textual_geometry::geometry::NHedronGeometry;
 use textual_geometry::geometry::SpiralGeometry;
-use textual_geometry::encoder::Encoder;
+use textual_geometry::geometry::{Geometry, ReversibleGeometry};
+use textual_geometry::rendering::bitmap::Bitmap;
 
 fn main() {
     let mut input_txt: String = String::default();
@@ -16,8 +18,32 @@ fn main() {
     let cwd = env::current_dir().unwrap();
     let cwd = cwd.to_str().unwrap();
 
+    encode_decode(input_txt, cwd);
+}
+
+fn encode_decode(input_txt: String, cwd: &str) {
     let mut spiral_geo = SpiralGeometry::new(0);
-    let spiral_encoder = Encoder::from_sequence(256, 2, input_txt.clone(), &mut spiral_geo);
+    let spiral_encoder = Encoder::from_sequence(256, input_txt.clone(), &mut spiral_geo);
+    let spiral_outfile = format!("{}/output_geometry/{}", cwd, "spiral.png");
+    spiral_encoder.to(&spiral_outfile);
+
+    let pregeometry =
+        Bitmap::to_points(&spiral_outfile).expect("Failed to load pregeometry from src.");
+
+    let mut geometry = SpiralGeometry::new(pregeometry.0 .0 - 1);
+    let reconstructed = geometry.reverse(pregeometry).unwrap();
+    println!("Reconstructed: {}", reconstructed);
+
+    let bytes = hex::decode(reconstructed).unwrap();
+    // let s = std::str::from_utf8(&bytes).unwrap();
+    let s = String::from_utf8_lossy(&bytes);
+    println!("UTF: {}", s);
+}
+
+#[allow(dead_code)]
+fn encode_all(input_txt: String, cwd: &str) {
+    let mut spiral_geo = SpiralGeometry::new(0);
+    let spiral_encoder = Encoder::from_sequence(256, input_txt.clone(), &mut spiral_geo);
     let spiral_outfile = format!("{}/output_geometry/{}", cwd, "spiral.png");
     spiral_encoder.to(&spiral_outfile);
 

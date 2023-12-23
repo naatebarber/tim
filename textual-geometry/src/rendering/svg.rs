@@ -11,10 +11,7 @@ impl Svg {
         let imsize = pad * 2 + dim;
         let canvas = Canvas::new(imsize, imsize);
 
-        Svg {
-            pad,
-            canvas,
-        }
+        Svg { pad, canvas }
     }
 
     pub fn from_geometry(&mut self, geometry: &dyn Geometry<LossyPoint>) {

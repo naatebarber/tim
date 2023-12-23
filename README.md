@@ -31,3 +31,7 @@ Attributes:
  - Relatively easy to decode after encode
  - Less mathematically easy to model, as the creation of the geometry is programmatic and not sinusoidal
  
+DECODE:
+ - TODO:
+   - Remove bitmap padding and just account for PX allocation correctly
+   - Experiment with search & sparse points instead of creating dense Points

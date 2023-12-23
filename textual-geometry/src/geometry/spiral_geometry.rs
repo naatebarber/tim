@@ -1,11 +1,13 @@
-use super::{Geometry, Point, ReversibleGeometry, PreGeometry};
+use std::borrow::Borrow;
+
+use super::{Geometry, Point, PreGeometry, ReversibleGeometry};
 
 pub struct SpiralGeometry {
     points: Vec<Point>,
     dim: u32,
 }
 
-#[allow(dead_code)] 
+#[allow(dead_code)]
 impl SpiralGeometry {
     pub fn new(dim: u32) -> Self {
         assert!(
@@ -19,12 +21,7 @@ impl SpiralGeometry {
         }
     }
 
-    fn fold_inward(
-        offset_x: u32,
-        offset_y: u32,
-        dim: u32,
-        sequence: &mut Vec<u8>,
-    ) -> Vec<Point> {
+    fn fold_inward(offset_x: u32, offset_y: u32, dim: u32, sequence: &mut Vec<u8>) -> Vec<Point> {
         let mut x_p = 0;
         let mut y_p = 0;
         let mut c_dim = dim;
@@ -43,7 +40,7 @@ impl SpiralGeometry {
                     points.push(Point {
                         x: x_p.clone(),
                         y: y_p.clone(),
-                        z: None
+                        z: None,
                     })
                 }
             }
@@ -56,7 +53,7 @@ impl SpiralGeometry {
                     points.push(Point {
                         x: x_p.clone(),
                         y: y_p.clone(),
-                        z: None
+                        z: None,
                     })
                 }
             }
@@ -69,7 +66,7 @@ impl SpiralGeometry {
                     points.push(Point {
                         x: x_p.clone(),
                         y: y_p.clone(),
-                        z: None
+                        z: None,
                     })
                 }
             }
@@ -82,7 +79,7 @@ impl SpiralGeometry {
                     points.push(Point {
                         x: x_p.clone(),
                         y: y_p.clone(),
-                        z: None
+                        z: None,
                     })
                 }
             }
@@ -102,7 +99,7 @@ impl SpiralGeometry {
             .map(|p| Point {
                 x: p.x + offset_x,
                 y: p.y + offset_y,
-                z: None
+                z: None,
             })
             .collect::<Vec<Point>>()
     }
@@ -162,27 +159,102 @@ impl Geometry<Point> for SpiralGeometry {
 
 impl ReversibleGeometry for SpiralGeometry {
     fn reverse(&mut self, pregeometry: PreGeometry) -> Option<String> {
-        let ((w, h), points) = pregeometry;
+        let ((w, _), points) = pregeometry;
         let chars: [char; 16] = [
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
         ];
-        let char_ix = |x: &char| chars.iter().position(|&y| y == *x);
-
-        if w != h || w % 4 != 0 {
-            return None;
-        }
 
         let dim = w;
-        let offset_step = dim / 4;
-        let c_offset_x = 0;
-        let c_offset_y = 0;
-        let c_x = 0;
-        let c_y = 0;
+        let outer_offset_step = dim / 4;
 
-        while c_offset_x < dim && c_offset_y < dim {
+        let mut cursors: Vec<Point> = Vec::with_capacity(16);
+        for i in 0..=15 {
+            let x_offset = i % 4;
+            let y_offset = i / 4;
 
-        }  
+            // Initialize each cursor at the first ix of it's respective character
+            cursors.push(Point {
+                x: x_offset * outer_offset_step,
+                y: y_offset * outer_offset_step,
+                z: None,
+            })
+        }
 
-        return Some(String::from("x"));
+        let mut inner_offset = 0;
+        let mut x = 0;
+        let mut y = 0;
+
+        let points_grid: Vec<&[Point]> = points.chunks(dim as usize).collect();
+
+        let next_char = |x: usize, y: usize| {
+            println!("x {} y {}", x, y);
+            let next_chars: Vec<char> = cursors
+                .iter()
+                .enumerate()
+                .filter_map(|(cursor_ix, cursor)| {
+                    let c_x = cursor.x as usize + x;
+                    let c_y = cursor.y as usize + y;
+
+                    let row = points_grid.get(c_y).unwrap();
+                    let v = &row[c_x];
+                    if v.z.unwrap_or(0) > 0 {
+                        let char_at_ix = chars[cursor_ix];
+                        return Some(char_at_ix);
+                    }
+
+                    return None;
+                })
+                .collect();
+
+            println!("{:?}", next_chars);
+
+            next_chars
+        };
+
+        let mut reconstructed = String::default();
+
+        while inner_offset < outer_offset_step / 2 {
+            // top to right
+            while x < (outer_offset_step - (2 * inner_offset)) {
+                x += 1;
+                let next = next_char(x as usize, y as usize);
+                if let Some(c) = next.get(0) {
+                    reconstructed.push(*c);
+                }
+            }
+            // right to bottom
+            while y < (outer_offset_step - (2 * inner_offset)) {
+                y += 1;
+                let next = next_char(x as usize, y as usize);
+                if let Some(c) = next.get(0) {
+                    reconstructed.push(*c);
+                }
+            }
+
+            // bottom to left
+            while x > inner_offset {
+                x -= 1;
+                let next = next_char(x as usize, y as usize);
+                if let Some(c) = next.get(0) {
+                    reconstructed.push(*c);
+                }
+            }
+
+            // left to top
+            while y > inner_offset + 1 {
+                y -= 1;
+                let next = next_char(x as usize, y as usize);
+                if let Some(c) = next.get(0) {
+                    reconstructed.push(*c);
+                }
+            }
+
+            // increase inner offset
+            inner_offset += 1;
+            x = inner_offset;
+            y = inner_offset;
+        }
+
+        return Some(reconstructed);
     }
 }

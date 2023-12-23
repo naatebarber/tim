@@ -1,12 +1,12 @@
-use std::f32::consts::PI;
 use super::{Geometry, LossyPoint};
+use std::f32::consts::PI;
 
 pub struct NHedronGeometry {
     diam: f32,
     points: Vec<LossyPoint>,
 }
 
-#[allow(dead_code)] 
+#[allow(dead_code)]
 impl NHedronGeometry {
     pub fn new(diam: f32) -> Self {
         NHedronGeometry {
@@ -83,13 +83,15 @@ impl Geometry<LossyPoint> for NHedronGeometry {
                         let x = f32::cos(z_radial_offset) * point_radius * sign;
                         let z = f32::sin(z_radial_offset) * point_radius;
 
-                        LossyPoint { x, y: point.y, z: Some(z) }
+                        LossyPoint {
+                            x,
+                            y: point.y,
+                            z: Some(z),
+                        }
                     })
                     .collect()
             })
             .collect();
-
-        
 
         self.points = geometry.into_iter().flatten().collect();
     }
