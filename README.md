@@ -8,9 +8,11 @@ Two goals for TIM:
  - Create image geometry that can convey textual meaning to a CNN. This doesn't have to be reversible, but bonus points if it is.
    - This would be useful for experimentation in comparing the efficacy of a sequence to sequence model with a CNN that can derive lingual meaning from geometric representations of text
 
+## Packages:
+
 ### `textual-geometry`: Create expressive geometry from an input string
 
-# NHedron Encoder
+**NHedron Encoder**
 
 Attributes:  
  - Harder to decode (img to hex) because of irrational PI products being mapped to rational PX values.
@@ -22,7 +24,7 @@ Steps:
  - Split each circle into M radial segments, where M is the length of the input
  - Each character from the input string is placed onto its cooresponding circle, with a radial segment offset of L (it's index in the input sequence);
 
-# Spiral Encoder
+**Spiral Encoder**
 
 Attributes:
  - Predefined input seq size defined by W, H of the image
