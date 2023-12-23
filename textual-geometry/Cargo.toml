@@ -1,5 +1,5 @@
 [package]
-name = "texual-geometry"
+name = "textual-geometry"
 version = "0.1.0"
 edition = "2021"
 

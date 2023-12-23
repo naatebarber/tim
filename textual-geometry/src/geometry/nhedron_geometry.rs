@@ -1,27 +1,32 @@
 use std::f32::consts::PI;
+use super::{Geometry, LossyPoint};
 
-#[derive(Debug)]
-pub struct Point {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
+pub struct NHedronGeometry {
+    diam: f32,
+    points: Vec<LossyPoint>,
 }
 
-pub struct Geometry {
-    radius: f32,
-    points: Vec<Point>,
-}
-
-impl Geometry {
-    pub fn new(radius: f32) -> Geometry {
-        Geometry {
-            radius,
+impl NHedronGeometry {
+    pub fn new(diam: f32) -> Self {
+        NHedronGeometry {
+            diam,
             points: vec![],
         }
     }
+}
 
-    pub fn translate(&mut self, sequence: String) {
-        let mut circular_paths: Vec<Vec<Point>> = vec![];
+impl Geometry<LossyPoint> for NHedronGeometry {
+    fn set_dim(&mut self, dim: u32) {
+        self.diam = dim as f32;
+    }
+
+    fn get_points(&self) -> &Vec<LossyPoint> {
+        &self.points
+    }
+
+    fn translate(&mut self, sequence: String) {
+        let radius = self.diam / 2.;
+        let mut circular_paths: Vec<Vec<LossyPoint>> = vec![];
         let chars: [char; 16] = [
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
         ];
@@ -38,11 +43,11 @@ impl Geometry {
             let path = circular_paths.get_mut(c_ix).unwrap();
             let radial_offset = segment_size * (i as f32);
 
-            let x: f32 = f32::cos(radial_offset) * self.radius;
-            let y: f32 = f32::sin(radial_offset) * self.radius;
+            let x: f32 = radius + f32::cos(radial_offset) * radius;
+            let y: f32 = radius + f32::sin(radial_offset) * radius;
             let z: f32 = 0.;
 
-            let point = Point { x, y, z };
+            let point = LossyPoint { x, y, z: Some(z) };
 
             path.push(point);
         }
@@ -52,10 +57,10 @@ impl Geometry {
 
         let z_segment_size = (PI / 2.) / (chars.len() as f32);
 
-        let geometry: Vec<Vec<Point>> = circular_paths
+        let geometry: Vec<Vec<LossyPoint>> = circular_paths
             .iter()
             .enumerate()
-            .map(move |(i, path): (usize, &Vec<Point>)| {
+            .map(move |(i, path): (usize, &Vec<LossyPoint>)| {
                 let z_radial_offset = z_segment_size * (i as f32);
                 path.iter()
                     .map(|point| {
@@ -77,16 +82,12 @@ impl Geometry {
                         let x = f32::cos(z_radial_offset) * point_radius * sign;
                         let z = f32::sin(z_radial_offset) * point_radius;
 
-                        Point { x, y: point.y, z }
+                        LossyPoint { x, y: point.y, z: Some(z) }
                     })
                     .collect()
             })
             .collect();
 
         self.points = geometry.into_iter().flatten().collect();
-    }
-
-    pub fn get_points(&self) -> &Vec<Point> {
-        &self.points
     }
 }

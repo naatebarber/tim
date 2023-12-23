@@ -1,5 +1,6 @@
-use super::geometry::{Geometry, Point};
-use image::{GrayImage, ImageBuffer};
+use image::GrayImage;
+use crate::geometry::Geometry;
+use crate::geometry::Point;
 
 pub struct Bitmap {
     buf: GrayImage,
@@ -17,7 +18,7 @@ impl Bitmap {
         }
     }
 
-    pub fn from_geometry(&mut self, geometry: &Geometry) {
+    pub fn from_geometry(&mut self, geometry: &dyn Geometry<Point>) {
         let points = geometry.get_points();
 
         for point in points.iter() {

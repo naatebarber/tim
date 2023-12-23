@@ -1,38 +1,35 @@
-use super::geometry;
-use super::geometry::Geometry;
+use crate::geometry::{Geometry, LossyPoint};
 use draw::*;
 
-pub struct Artist {
-    radius: f32,
-    pad: f32,
+pub struct Svg {
+    pad: u32,
     canvas: Canvas,
 }
 
-impl Artist {
-    pub fn new(radius: f32, pad: f32) -> Artist {
-        let mut diam = (radius * 2.) as u32;
-        diam = diam + (2. * pad) as u32;
-        let canvas = Canvas::new(diam, diam);
+impl Svg {
+    pub fn new(dim: u32, pad: u32) -> Svg {
+        let imsize = pad * 2 + dim;
+        let canvas = Canvas::new(imsize, imsize);
 
-        Artist {
-            radius,
+        Svg {
             pad,
             canvas,
         }
     }
 
-    pub fn from_geometry(&mut self, geometry: &Geometry) {
-        Artist::background(&mut self.canvas);
+    pub fn from_geometry(&mut self, geometry: &dyn Geometry<LossyPoint>) {
+        Svg::background(&mut self.canvas);
 
         let pts: Vec<Drawing> = geometry
             .get_points()
             .iter()
-            .map(|point: &geometry::Point| {
-                let luminosity = point.z;
-                let x = self.radius + point.x + self.pad;
-                let y = self.radius + point.y + self.pad;
+            .map(|point: &LossyPoint| {
+                let luminosity = point.z.unwrap_or_else(|| 0.) as u8;
 
-                Artist::point_at(x, y, Some(luminosity as u8))
+                let x = self.pad as f32 + point.x;
+                let y = self.pad as f32 + point.y;
+
+                Svg::point_at(x, y, luminosity)
             })
             .collect();
 
@@ -41,9 +38,7 @@ impl Artist {
         }
     }
 
-    pub fn point_at(x: f32, y: f32, luminosity: Option<u8>) -> Drawing {
-        let luminosity = luminosity.unwrap_or_else(|| 255);
-
+    pub fn point_at(x: f32, y: f32, luminosity: u8) -> Drawing {
         Drawing::new()
             .with_shape(Shape::Rectangle {
                 width: 1,
