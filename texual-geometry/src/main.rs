@@ -1,3 +1,4 @@
+mod artist;
 mod nhedron;
 mod spiral;
 
@@ -22,7 +23,7 @@ fn main() {
 
     let cwd = env::current_dir().unwrap();
     let cwd = cwd.to_str().unwrap();
-    let outfile = format!("{}/{}", cwd, "test.svg");
+    let outfile = format!("{}/{}", cwd, "test.png");
 
     encoder.to(&outfile);
 }

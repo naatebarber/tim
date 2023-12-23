@@ -70,9 +70,6 @@ impl Artist {
     }
 
     pub fn export(&self, path: &str) {
-        // let cwd = env::current_dir().unwrap();
-        // let cwd = cwd.to_str().unwrap();
-        // let outfile = format!("{}/{}", cwd, "test.svg");
         render::save(&self.canvas, path, SvgRenderer::new())
             .expect("Failed to save your geometry to disk.")
     }

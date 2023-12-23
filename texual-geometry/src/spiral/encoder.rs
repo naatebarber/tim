@@ -1,4 +1,5 @@
 use super::artist::Artist;
+use super::bitmap::Bitmap;
 use super::geometry::Geometry;
 use crate::Encoder;
 
@@ -20,8 +21,8 @@ impl Encoder for SpiralEncoder {
     }
 
     fn to(&self, path: &str) {
-        let mut artist = Artist::new(self.dim, self.pad);
-        artist.from_geometry(&self.geometry);
-        artist.export(path);
+        let mut bitmap = Bitmap::new(self.dim, self.pad);
+        bitmap.from_geometry(&self.geometry);
+        bitmap.save(path);
     }
 }
