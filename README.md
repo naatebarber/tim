@@ -1,5 +1,4 @@
-### Create 3-dimensional geometry from an input string
-
+### Create expressive geometry from an input string
 
 # NHedron Encoder
 
