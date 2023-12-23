@@ -5,6 +5,7 @@ pub struct SpiralGeometry {
     dim: u32,
 }
 
+#[allow(dead_code)] 
 impl SpiralGeometry {
     pub fn new(dim: u32) -> Self {
         assert!(
@@ -109,6 +110,10 @@ impl SpiralGeometry {
 
 impl Geometry<Point> for SpiralGeometry {
     fn set_dim(&mut self, dim: u32) {
+        assert!(
+            dim % 4 == 0,
+            "Ensure spiral::Geometry dim attr is divisible evenly by 4"
+        );
         self.dim = dim;
     }
 

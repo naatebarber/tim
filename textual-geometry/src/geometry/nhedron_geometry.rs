@@ -6,6 +6,7 @@ pub struct NHedronGeometry {
     points: Vec<LossyPoint>,
 }
 
+#[allow(dead_code)] 
 impl NHedronGeometry {
     pub fn new(diam: f32) -> Self {
         NHedronGeometry {
