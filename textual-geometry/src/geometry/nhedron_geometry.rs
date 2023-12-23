@@ -89,6 +89,8 @@ impl Geometry<LossyPoint> for NHedronGeometry {
             })
             .collect();
 
+        
+
         self.points = geometry.into_iter().flatten().collect();
     }
 }

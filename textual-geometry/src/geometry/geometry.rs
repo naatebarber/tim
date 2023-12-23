@@ -17,3 +17,9 @@ pub trait Geometry<PointType> {
 
     fn get_points(&self) -> &Vec<PointType>;
 }
+
+pub trait ReversibleGeometry {
+    fn reverse(&mut self, pregeometry: PreGeometry) -> Option<String>;
+}
+
+pub type PreGeometry = ((u32, u32), Vec<Point>);

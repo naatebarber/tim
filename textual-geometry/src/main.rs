@@ -18,11 +18,11 @@ fn main() {
 
     let mut spiral_geo = SpiralGeometry::new(0);
     let spiral_encoder = Encoder::from_sequence(256, 2, input_txt.clone(), &mut spiral_geo);
-    let spiral_outfile = format!("{}/{}", cwd, "spiral.png");
+    let spiral_outfile = format!("{}/output_geometry/{}", cwd, "spiral.png");
     spiral_encoder.to(&spiral_outfile);
 
     let mut nhedron_geo = NHedronGeometry::new(0.);
     let nhedron_encoder = LossyEncoder::from_sequence(256, 2, input_txt, &mut nhedron_geo);
-    let nhedron_outfile = format!("{}/{}", cwd, "nhedron.svg");
+    let nhedron_outfile = format!("{}/output_geometry/{}", cwd, "nhedron.svg");
     nhedron_encoder.to(&nhedron_outfile);
 }

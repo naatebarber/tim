@@ -1,4 +1,4 @@
-use super::{Geometry, Point};
+use super::{Geometry, Point, ReversibleGeometry, PreGeometry};
 
 pub struct SpiralGeometry {
     points: Vec<Point>,
@@ -157,5 +157,32 @@ impl Geometry<Point> for SpiralGeometry {
 
     fn get_points(&self) -> &Vec<Point> {
         &self.points
+    }
+}
+
+impl ReversibleGeometry for SpiralGeometry {
+    fn reverse(&mut self, pregeometry: PreGeometry) -> Option<String> {
+        let ((w, h), points) = pregeometry;
+        let chars: [char; 16] = [
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+        ];
+        let char_ix = |x: &char| chars.iter().position(|&y| y == *x);
+
+        if w != h || w % 4 != 0 {
+            return None;
+        }
+
+        let dim = w;
+        let offset_step = dim / 4;
+        let c_offset_x = 0;
+        let c_offset_y = 0;
+        let c_x = 0;
+        let c_y = 0;
+
+        while c_offset_x < dim && c_offset_y < dim {
+
+        }  
+
+        return Some(String::from("x"));
     }
 }
