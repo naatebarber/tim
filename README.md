@@ -1,4 +1,14 @@
-### Create expressive geometry from an input string
+# TIM
+
+Text to image toolkit and experimentation in rust.
+
+Two goals for TIM:
+ - Create efficient and reversible image representations of sequential text. (sequence -> image -> sequence)
+   - The original idea was to create reversible image representations of text for use in a chaotic encryption scheme.
+ - Create image geometry that can convey textual meaning to a CNN. This doesn't have to be reversible, but bonus points if it is.
+   - This would be useful for experimentation in comparing the efficacy of a sequence to sequence model with a CNN that can derive lingual meaning from geometric representations of text
+
+### `textual-geometry`: Create expressive geometry from an input string
 
 # NHedron Encoder
 
