@@ -22,15 +22,29 @@ fn main() {
 }
 
 fn encode_decode(input_txt: String, cwd: &str) {
-    let mut spiral_geo = SpiralGeometry::new(0);
-    let spiral_encoder = Encoder::from_sequence(256, input_txt.clone(), &mut spiral_geo);
+    // let hex_sample = "0123456789abcdef";
+    // let hex_sample = "";
+    // let mut hex_str = String::default();
+    // for _ in 0..=270 {
+    //     hex_str.push_str(hex_sample);
+    // }
+
+    let hex_str = hex::encode(input_txt);
+    println!("Original: {}", hex_str);
+
+    let dim = 256;
+    let mut spiral_geo = SpiralGeometry::new(dim);
+    spiral_geo.translate(hex_str);
+    let mut bitmap = Bitmap::new(dim);
+    bitmap.from_geometry(&spiral_geo);
     let spiral_outfile = format!("{}/output_geometry/{}", cwd, "spiral.png");
-    spiral_encoder.to(&spiral_outfile);
+    bitmap.save(&spiral_outfile);
 
     let pregeometry =
         Bitmap::to_points(&spiral_outfile).expect("Failed to load pregeometry from src.");
 
     let mut geometry = SpiralGeometry::new(pregeometry.0 .0 - 1);
+    // let mut geometry = SpiralGeometry::new(pregeometry.0.0);
     let reconstructed = geometry.reverse(pregeometry).unwrap();
     println!("Reconstructed: {}", reconstructed);
 

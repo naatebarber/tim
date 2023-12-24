@@ -20,13 +20,15 @@ impl Bitmap {
     pub fn from_geometry(&mut self, geometry: &dyn Geometry<Point>) {
         let points = geometry.get_points();
 
+        println!("Points in: {}", points.len());
+
         for point in points.iter() {
             let pix = self.buf.get_pixel_mut(point.x, point.y);
             *pix = image::Luma([255u8])
         }
     }
 
-    pub fn to_sparse_points(&mut self, src: &str) -> Result<PreGeometry, ImageError> {
+    pub fn to_sparse_points(src: &str) -> Result<PreGeometry, ImageError> {
         let image = ImageReader::open(src)?.decode()?;
         let luma8 = image.into_luma8();
         let (width, height) = luma8.dimensions();
@@ -46,6 +48,8 @@ impl Bitmap {
             })
             .collect::<Vec<Point>>();
 
+        println!("Points out: {}", points.len());
+
         Ok(((width, height), points))
     }
 
@@ -64,6 +68,8 @@ impl Bitmap {
                 };
             })
             .collect::<Vec<Point>>();
+
+        println!("Points out: {}", points.len());
 
         Ok(((width, height), points))
     }

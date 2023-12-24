@@ -35,3 +35,4 @@ DECODE:
  - TODO:
    - Remove bitmap padding and just account for PX allocation correctly
    - Experiment with search & sparse points instead of creating dense Points
+   - There is overlap at the spiral edges. Fix that so decoding can work properly.
