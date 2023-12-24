@@ -24,7 +24,7 @@ impl Bitmap {
 
         for point in points.iter() {
             let pix = self.buf.get_pixel_mut(point.x, point.y);
-            *pix = image::Luma([255u8])
+            *pix = image::Luma([point.z.unwrap_or(255u32) as u8])
         }
     }
 

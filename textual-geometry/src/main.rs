@@ -3,6 +3,7 @@ mod geometry;
 use std::env;
 use textual_geometry::encoder::Encoder;
 use textual_geometry::encoder::LossyEncoder;
+use textual_geometry::geometry::DBLGeometry;
 use textual_geometry::geometry::NHedronGeometry;
 use textual_geometry::geometry::SpiralGeometry;
 use textual_geometry::geometry::{Geometry, ReversibleGeometry};
@@ -18,9 +19,36 @@ fn main() {
     let cwd = env::current_dir().unwrap();
     let cwd = cwd.to_str().unwrap();
 
-    encode_decode(input_txt, cwd);
+    encode_decode_dbl(input_txt, cwd);
 }
 
+fn encode_decode_dbl(input_txt: String, cwd: &str) {
+    let hex_str = hex::encode(input_txt);
+    println!("OG: {}", hex_str);
+
+    let dim = 256;
+    let mut dbl_geo = DBLGeometry::new(dim);
+    dbl_geo.translate(hex_str);
+    let mut bitmap = Bitmap::new(dim);
+    bitmap.from_geometry(&dbl_geo);
+    let dbl_outfile = format!("{}/output_geometry/{}", cwd, "dbl.png");
+    bitmap.save(&dbl_outfile);
+
+    let pregeometry =
+        Bitmap::to_points(&dbl_outfile).expect("Failed to load pregeometry from src.");
+
+    let mut geometry = DBLGeometry::new(pregeometry.0 .0);
+    // let mut geometry = DBLGeometry::new(pregeometry.0.0);
+    let reconstructed = geometry.reverse(pregeometry).unwrap();
+    println!("RE: {}", reconstructed);
+
+    let bytes = hex::decode(reconstructed).unwrap();
+    // let s = std::str::from_utf8(&bytes).unwrap();
+    let s = String::from_utf8_lossy(&bytes);
+    println!("UTF: {}", s);
+}
+
+#[allow(dead_code)]
 fn encode_decode(input_txt: String, cwd: &str) {
     // let hex_sample = "00000000";
     // let mut hex_str = String::default();
@@ -61,7 +89,12 @@ fn encode_all(input_txt: String, cwd: &str) {
     spiral_encoder.to(&spiral_outfile);
 
     let mut nhedron_geo = NHedronGeometry::new(0.);
-    let nhedron_encoder = LossyEncoder::from_sequence(256, 2, input_txt, &mut nhedron_geo);
+    let nhedron_encoder = LossyEncoder::from_sequence(256, 2, input_txt.clone(), &mut nhedron_geo);
     let nhedron_outfile = format!("{}/output_geometry/{}", cwd, "nhedron.svg");
     nhedron_encoder.to(&nhedron_outfile);
+
+    let mut dbl_geo = DBLGeometry::new(256);
+    let dbl_encoder = Encoder::from_sequence(256, input_txt.clone(), &mut dbl_geo);
+    let dbl_outfile = format!("{}/output_geometry/{}", cwd, "dbl.png");
+    dbl_encoder.to(&dbl_outfile);
 }
