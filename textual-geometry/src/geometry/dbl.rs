@@ -52,11 +52,10 @@ impl Geometry<Point> for DBLGeometry {
 
         let char_ix = |x: &char| chars.iter().position(|&y| y == *x);
 
-        let order = f32::log2(self.dim as f32) as u32;
+        let order = f32::log2(self.dim as f32) as u32; // What power of 2 the dimension is
         let num_blocks = (self.dim / 2).pow(2) as usize;
 
         let chunks = sequence.chars().chunks(num_blocks);
-        let num_chunks = sequence.len().div_ceil(num_blocks);
 
         let mut stacks: Vec<Vec<char>> = Vec::with_capacity(num_blocks);
 
@@ -77,11 +76,7 @@ impl Geometry<Point> for DBLGeometry {
                 let mut bits = self.hex_to_bits(ix);
                 bits.iter_mut()
                     .for_each(|b| *b *= 2u32.pow(order - 1 - j as u32));
-                points = points
-                    .into_iter()
-                    .zip(bits)
-                    .map(|(a, b)| a + b + 1)
-                    .collect();
+                points = points.into_iter().zip(bits).map(|(a, b)| a + b).collect();
             }
 
             let x = ((i % (self.dim / 2) as usize) * 2) as u32;
@@ -111,6 +106,25 @@ impl Geometry<Point> for DBLGeometry {
                 z: Some(points[3]),
             });
         }
+
+        let num_layers = sequence.len().div_ceil(num_blocks) as u32;
+        let layer_count_bits = self.hex_to_bits(num_layers);
+        let first_block = &mut self.points[0..4];
+        for (i, point) in first_block.into_iter().enumerate() {
+            if let Some(lum) = point.z {
+                point.z = Some(lum + layer_count_bits[i]);
+            }
+        }
+
+        let null_ix = sequence.len() % num_blocks;
+        let null_point = &mut self.points[null_ix];
+        null_point.z = Some(null_point.z.unwrap() + 1);
+        // let null_block = &mut self.points[null_ix..null_ix+4];
+        // for point in null_block {
+        //     if let Some(lum) = point.z {
+        //         point.z = Some(lum + 1)
+        //     }
+        // }
     }
 
     fn get_points(&self) -> &Vec<Point> {
@@ -147,11 +161,24 @@ impl ReversibleGeometry for DBLGeometry {
             }
         }
 
+        let first_block = &mut points[0..4];
+        let layer_count_bits = first_block
+            .into_iter()
+            .map(|p| {
+                let lum = p.z.unwrap();
+                (lum & 1) == 1
+            })
+            .collect_vec();
+        let num_layers = self.bits_to_hex(&layer_count_bits);
+
         let mut out = String::default();
 
+        println!("{num_layers}");
+
         'outer: for i in (1..8).rev() {
-            for block in points.chunks(4) {
-                if (block[0].z.unwrap() & 1) != 1 {
+            for (j, block) in points.chunks(4).enumerate() {
+                if 7 - num_layers == i && ((block[0].z.unwrap() & 1) == 1) && (j != 0) {
+                    println!("j {j} i {i}");
                     break 'outer;
                 }
                 let bits = block
