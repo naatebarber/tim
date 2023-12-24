@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 use super::{Geometry, Point, PreGeometry, ReversibleGeometry};
 
 pub struct SpiralGeometry {
@@ -35,12 +33,12 @@ impl SpiralGeometry {
 
         while inner_offset < outer_offset_step / 2 {
             // top to right
-            while x < (outer_offset_step - inner_offset) {
+            while x < (outer_offset_step - inner_offset - 1) {
                 x += 1;
                 cb(x, y);
             }
             // right to bottom
-            while y < (outer_offset_step - inner_offset) {
+            while y < (outer_offset_step - inner_offset - 1) {
                 y += 1;
                 cb(x, y);
             }
@@ -133,7 +131,6 @@ impl ReversibleGeometry for SpiralGeometry {
 
         println!("W {}", w);
 
-        let dim = w;
         let outer_offset_step = self.dim / 4;
 
         let mut cursors: Vec<Point> = Vec::with_capacity(16);
@@ -149,7 +146,7 @@ impl ReversibleGeometry for SpiralGeometry {
             })
         }
 
-        let points_grid: Vec<&[Point]> = points.chunks(dim as usize).collect();
+        let points_grid: Vec<&[Point]> = points.chunks(self.dim as usize).collect();
 
         let mut reconstructed = String::default();
 
@@ -172,11 +169,6 @@ impl ReversibleGeometry for SpiralGeometry {
                     return None;
                 })
                 .collect();
-
-            if next_chars.len() > 0 {
-                println!("{}", next_chars.len());
-                // println!("spir: {} x: {} y: {}", )
-            }
 
             if let Some(c) = next_chars.get(0) {
                 reconstructed.push(*c);

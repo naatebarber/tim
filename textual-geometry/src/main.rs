@@ -22,10 +22,9 @@ fn main() {
 }
 
 fn encode_decode(input_txt: String, cwd: &str) {
-    // let hex_sample = "0123456789abcdef";
-    // let hex_sample = "";
+    // let hex_sample = "000000000000";
     // let mut hex_str = String::default();
-    // for _ in 0..=270 {
+    // for _ in 0..=15 {
     //     hex_str.push_str(hex_sample);
     // }
 
@@ -43,7 +42,7 @@ fn encode_decode(input_txt: String, cwd: &str) {
     let pregeometry =
         Bitmap::to_points(&spiral_outfile).expect("Failed to load pregeometry from src.");
 
-    let mut geometry = SpiralGeometry::new(pregeometry.0 .0 - 1);
+    let mut geometry = SpiralGeometry::new(pregeometry.0 .0);
     // let mut geometry = SpiralGeometry::new(pregeometry.0.0);
     let reconstructed = geometry.reverse(pregeometry).unwrap();
     println!("Reconstructed: {}", reconstructed);

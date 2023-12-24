@@ -11,7 +11,7 @@ pub struct Bitmap {
 
 impl Bitmap {
     pub fn new(dim: u32) -> Bitmap {
-        let imsize = dim + 1;
+        let imsize = dim;
         let image_buffer = GrayImage::from_fn(imsize, imsize, |_, _| image::Luma([0u8]));
 
         Bitmap { buf: image_buffer }
