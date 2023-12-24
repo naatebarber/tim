@@ -34,25 +34,25 @@ impl SpiralGeometry {
         while inner_offset < outer_offset_step / 2 {
             // top to right
             while x < (outer_offset_step - inner_offset - 1) {
-                x += 1;
                 cb(x, y);
+                x += 1;
             }
             // right to bottom
             while y < (outer_offset_step - inner_offset - 1) {
-                y += 1;
                 cb(x, y);
+                y += 1;
             }
 
             // bottom to left
             while x > inner_offset {
-                x -= 1;
                 cb(x, y);
+                x -= 1;
             }
 
             // left to top
             while y > inner_offset {
-                y -= 1;
                 cb(x, y);
+                y -= 1;
             }
 
             // increase inner offset

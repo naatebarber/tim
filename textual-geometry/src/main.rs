@@ -22,14 +22,14 @@ fn main() {
 }
 
 fn encode_decode(input_txt: String, cwd: &str) {
-    // let hex_sample = "000000000000";
+    // let hex_sample = "00000000";
     // let mut hex_str = String::default();
-    // for _ in 0..=15 {
+    // for _ in 0..=200 {
     //     hex_str.push_str(hex_sample);
     // }
 
     let hex_str = hex::encode(input_txt);
-    println!("Original: {}", hex_str);
+    println!("OG: {}", hex_str);
 
     let dim = 256;
     let mut spiral_geo = SpiralGeometry::new(dim);
@@ -45,7 +45,7 @@ fn encode_decode(input_txt: String, cwd: &str) {
     let mut geometry = SpiralGeometry::new(pregeometry.0 .0);
     // let mut geometry = SpiralGeometry::new(pregeometry.0.0);
     let reconstructed = geometry.reverse(pregeometry).unwrap();
-    println!("Reconstructed: {}", reconstructed);
+    println!("RE: {}", reconstructed);
 
     let bytes = hex::decode(reconstructed).unwrap();
     // let s = std::str::from_utf8(&bytes).unwrap();
