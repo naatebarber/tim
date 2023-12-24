@@ -35,4 +35,6 @@ DECODE:
  - TODO:
    - Remove bitmap padding and just account for PX allocation correctly
    - Experiment with search & sparse points instead of creating dense Points
-   - There is overlap at the spiral edges. Fix that so decoding can work properly.
+   - There is overlap at the spiral edges. Fix that so decoding can work properly. (DONE)
+   - Dim is off at 257 vs 256. Fix. (DONE)
+   - One extra character is being added for wrapping sequences, fix.
