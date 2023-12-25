@@ -1,0 +1,3 @@
+[workspace]
+
+members = ["textual-geometry", "ximp"]
