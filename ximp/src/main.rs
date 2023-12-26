@@ -1,36 +1,58 @@
-use tokio::io::copy_bidirectional;
-use tokio::net::{TcpListener, TcpStream};
+mod http_svc;
+mod tcp_prox;
 
-use futures::FutureExt;
-use std::env;
+extern crate getopts;
+use getopts::Options;
+use std::env::args;
 use std::error::Error;
+
+use http_svc::http_svc as transcribe;
+use tcp_prox::prox as proxy;
+
+fn print_usage(program: &str, opts: Options) {
+    let brief = format!("Usage: {} FILE [options]", program);
+    opts.usage(&brief);
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let listen_addr = env::args()
-        .nth(1)
-        .unwrap_or_else(|| "127.0.0.1:8081".to_string());
-    let server_addr = env::args()
-        .nth(2)
-        .unwrap_or_else(|| "127.0.0.1:8080".to_string());
+    let args: Vec<String> = args().collect();
+    let program = args[0].clone();
 
-    println!("Listening on: {}", listen_addr);
-    println!("Proxying to: {}", server_addr);
+    let mut opts = Options::new();
 
-    let listener = TcpListener::bind(&server_addr).await?;
+    opts.optopt(
+        "m",
+        "mode",
+        "Mode in which to run ximp",
+        "[proxy, transcribe]",
+    );
+    opts.optflag("h", "help", "Show options");
 
-    while let Ok((mut inbound, _)) = listener.accept().await {
-        let mut outbound = TcpStream::connect(server_addr.clone()).await?;
+    let m = match opts.parse(&args[1..]) {
+        Ok(m) => m,
+        Err(f) => panic!("{}", f.to_string()),
+    };
 
-        tokio::spawn(async move {
-            copy_bidirectional(&mut inbound, &mut outbound)
-                .map(|r| {
-                    if let Err(e) = r {
-                        eprintln!("Failed to proxy with error {}", e);
-                    }
-                })
-                .await
-        });
+    if m.opt_present("h") {
+        print_usage(&program, opts);
+        return Ok(());
+    }
+
+    match m
+        .opt_str("m")
+        .unwrap_or(String::from("transcribe"))
+        .as_str()
+    {
+        "transcribe" => {
+            transcribe().await;
+        }
+        "proxy" => {
+            proxy().await?;
+        }
+        m => {
+            panic!("Unknown ximp mode {}", m);
+        }
     }
 
     Ok(())

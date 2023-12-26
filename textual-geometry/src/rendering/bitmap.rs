@@ -1,3 +1,5 @@
+use std::io::Cursor;
+
 use crate::geometry::Geometry;
 use crate::geometry::Point;
 use crate::geometry::PreGeometry;
@@ -6,7 +8,7 @@ use image::GrayImage;
 use image::ImageError;
 
 pub struct Bitmap {
-    buf: GrayImage,
+    pub buf: GrayImage,
 }
 
 impl Bitmap {
@@ -76,5 +78,13 @@ impl Bitmap {
 
     pub fn save(&self, path: &str) {
         self.buf.save(path).unwrap();
+    }
+
+    pub fn write_png_to(&self, buffer: &mut std::io::BufWriter<Cursor<Vec<u8>>>) {
+        self.buf.write_to(buffer, image::ImageFormat::Png).unwrap()
+    }
+
+    pub fn get_export_type() -> image::ImageOutputFormat {
+        image::ImageOutputFormat::Png
     }
 }
