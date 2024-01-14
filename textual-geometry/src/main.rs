@@ -11,7 +11,8 @@ use textual_geometry::geometry::{Geometry, ReversibleGeometry};
 use textual_geometry::rendering::bitmap::Bitmap;
 
 fn print_usage(program: &str, opts: Options) {
-    let brief = format!("Usage: {} [options]", program);
+    let descript = "Encode sequential text data to and from image geometry";
+    let brief = format!("Usage: {} [options]\n{}", program, descript);
     print!("{}", opts.usage(&brief));
 }
 
@@ -24,13 +25,13 @@ fn main() {
         "e",
         "encode",
         "Geometry format with which to encode the input sequence",
-        "spiral",
+        "[spiral]",
     );
     opts.optopt(
         "d",
         "decode",
         "Geometry format with which to decode the input image",
-        "spiral",
+        "[spiral]",
     );
     opts.optopt(
         "p",
