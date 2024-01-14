@@ -22,8 +22,6 @@ impl Bitmap {
     pub fn from_geometry(&mut self, geometry: &dyn Geometry<Point>) {
         let points = geometry.get_points();
 
-        println!("Points in: {}", points.len());
-
         for point in points.iter() {
             let pix = self.buf.get_pixel_mut(point.x, point.y);
             *pix = image::Luma([255u8])
@@ -50,8 +48,6 @@ impl Bitmap {
             })
             .collect::<Vec<Point>>();
 
-        println!("Points out: {}", points.len());
-
         Ok(((width, height), points))
     }
 
@@ -70,8 +66,6 @@ impl Bitmap {
                 };
             })
             .collect::<Vec<Point>>();
-
-        println!("Points out: {}", points.len());
 
         Ok(((width, height), points))
     }

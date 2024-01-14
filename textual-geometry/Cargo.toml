@@ -5,7 +5,12 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "tim"
+path = "src/main.rs"
+
 [dependencies]
 draw = "0.3.0"
 hex = "0.4.3"
 image = "0.24.7"
+getopts = "0.2"

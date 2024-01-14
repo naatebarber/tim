@@ -129,8 +129,6 @@ impl ReversibleGeometry for SpiralGeometry {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
         ];
 
-        println!("W {}", w);
-
         let outer_offset_step = self.dim / 4;
 
         let mut cursors: Vec<Point> = Vec::with_capacity(16);
