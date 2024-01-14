@@ -1,5 +1,3 @@
-mod geometry;
-
 extern crate getopts;
 
 use getopts::Options;

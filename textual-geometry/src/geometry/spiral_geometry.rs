@@ -124,7 +124,7 @@ impl Geometry<Point> for SpiralGeometry {
 
 impl ReversibleGeometry for SpiralGeometry {
     fn reverse(&mut self, pregeometry: PreGeometry) -> Option<String> {
-        let ((w, _), points) = pregeometry;
+        let (_, points) = pregeometry;
         let chars: [char; 16] = [
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
         ];
