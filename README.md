@@ -12,6 +12,23 @@ Two goals for TIM:
 
 ### `textual-geometry`: Create expressive geometry from an input string
 
+Installation:
+
+```bash
+cd textual-geometry
+cargo build --release
+cargo install --path .
+```
+
+Usage:
+```bash
+# Encode a file
+cat file.txt | tim -e spiral -p /tmp/encoding.png
+
+# Decode a file
+tim -d spiral -p /tmp/encoding.png
+```
+
 **NHedron Encoder**
 
 Attributes:  

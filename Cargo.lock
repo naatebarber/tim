@@ -1230,6 +1230,7 @@ name = "textual-geometry"
 version = "0.1.0"
 dependencies = [
  "draw",
+ "getopts",
  "hex",
  "image",
 ]
